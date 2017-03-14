@@ -1,0 +1,11 @@
+#header {
+	background-color: black;
+	color: white;
+	text-align: center;
+	}
+
+	.panel > .panel-heading {
+    background-image: none;
+    background-color: #428bca;
+    color: white;
+	}
