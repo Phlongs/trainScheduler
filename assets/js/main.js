@@ -16,8 +16,14 @@
     var destination = "";
     var trainTime = "";
     var frequency = "";
+    var currentTime = moment();
     var nextArrival = "";
+    var nextArrivalFormatted = "";
     var minAway = "";
+    var diffTime = "";
+    var timeRemainder = "";
+    var minutesTillTrain = "";
+    
 
    	// Click Button changes what is stored in firebase
     $("#click-button").on("click", function() {
@@ -29,12 +35,22 @@
       startTime = $("#startTime").val().trim();
       frequency = $("#frequency").val().trim();
 
+      startTimeConverted = moment(startTime, "hh:mm").subtract(1, "years");
+      diffTime = moment().diff(moment(startTimeConverted), "minutes");
+      timeRemainder = diffTime%frequency;
+      minutesTillTrain = frequency - timeRemainder;
+      nextArrival = moment().add(minutesTillTrain, "minutes");
+      nextArrivalFormatted = moment(nextArrival).format("hh:mm");
+
+
+
       // Change what is saved in firebase
       database.ref().push({
         trainName: trainName,
         destination: destination,
-        startTime: startTime,
         frequency: frequency,
+        nextArrivalFormatted: nextArrivalFormatted,
+        minutesTillTrain: minutesTillTrain,
         dateAdded: firebase.database.ServerValue.TIMESTAMP
 
       });
@@ -51,7 +67,7 @@
       console.log(childSnapshot.val().monthlyRate);
       
       // full list of items to the well
-      $(".employeeInfo").append("<tr><td>" + childSnapshot.val().trainName + "</td>" + "<td>" + childSnapshot.val().destination + "</td> " + "<td>" + childSnapshot.val().frequency + "</td>" + "<td>" + "next arrival" + "</td>"  + "<td>" + "minutes away" + "</td></tr>");
+      $(".trainInfo").append("<tr><td>" + childSnapshot.val().trainName + "</td>" + "<td>" + childSnapshot.val().destination + "</td> " + "<td>" + childSnapshot.val().frequency + "</td>" + "<td>" + childSnapshot.val().nextArrivalFormatted + "</td>"  + "<td>" + childSnapshot.val().minutesTillTrain + "</td></tr>");
        
 
     // Handle the errors
